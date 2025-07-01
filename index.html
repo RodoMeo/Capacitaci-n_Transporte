@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capacitación Eurostat - Descarga de Datos de Transporte UE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .slide:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        .slide:nth-child(odd) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide h2 {
+            color: #4a5568;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .slide h3 {
+            color: #2d3748;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        .step-card {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .url-box {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+
+        .checklist {
+            background: #f0fff4;
+            border: 2px solid #68d391;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            background: #e6fffa;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #68d391;
+            border-radius: 3px;
+            margin-right: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox.checked {
+            background: #68d391;
+            color: white;
+        }
+
+        .checkbox.checked::after {
+            content: "✓";
+            font-weight: bold;
+        }
+
+        .warning {
+            background: #fff5f5;
+            border-left: 5px solid #f56565;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+        }
+
+        .info {
+            background: #ebf8ff;
+            border-left: 5px solid #3182ce;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+        }
+
+        .download-formats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .format-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .format-card:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #68d391 0%, #38b2ac 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 2s ease;
+            border-radius: 10px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #5a67d8;
+            transform: scale(1.1);
+        }
+
+        .video-placeholder {
+            background: #2d3748;
+            color: white;
+            padding: 60px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .video-placeholder h3 {
+            color: #68d391;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .slide h2 {
+                font-size: 1.5em;
+            }
+            
+            .download-formats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="header">
+            <h1>🚢 Capacitación Eurostat</h1>
+            <p>Descarga de Datos de Transporte Marítimo de la Unión Europea</p>
+            <p><strong>Aplicable a todos los países de la UE</strong> • <em>Ejemplo: Bélgica</em></p>
+        </div>
+
+        <div class="slide">
+            <h2>📋 Objetivos de la Capacitación</h2>
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <strong>Acceder</strong> al portal oficial de Eurostat
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <strong>Navegar</strong> por la sección de transporte marítimo
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <strong>Filtrar</strong> datos por país de interés (ejemplo: Bélgica)
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <strong>Descargar</strong> información en formato Excel/CSV
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🌐 Paso 1: Acceso al Portal Eurostat</h2>
+            <div class="info">
+                <strong>URL oficial:</strong> Portal de datos de transporte marítimo
+            </div>
+            <div class="url-box">
+                https://ec.europa.eu/eurostat/databrowser/explore/all/transp?lang=en&subtheme=mar.mar_go&display=list&sort=category
+            </div>
+            <div class="warning">
+                <strong>⚠️ Importante:</strong> Asegúrate de tener una conexión estable a internet y un navegador actualizado.
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🔍 Paso 2: Navegación en la Interfaz</h2>
+            <h3>Elementos clave a identificar:</h3>
+            <div class="step-card">
+                <span class="highlight">Panel lateral izquierdo:</span> Filtros y categorías
+            </div>
+            <div class="step-card">
+                <span class="highlight">Área central:</span> Lista de datasets disponibles
+            </div>
+            <div class="step-card">
+                <span class="highlight">Opciones superiores:</span> Visualización y descarga
+            </div>
+            <div class="step-card">
+                <span class="highlight">Barra de idiomas:</span> Cambiar a español si es necesario
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>📊 Paso 3: Selección de Dataset</h2>
+            <h3>Datasets recomendados para análisis:</h3>
+            <div class="download-formats">
+                <div class="format-card">
+                    <strong>mar_go_am</strong>
+                    <p>Mercancías transportadas por mar (datos anuales)</p>
+                </div>
+                <div class="format-card">
+                    <strong>mar_go_qm</strong>
+                    <p>Mercancías transportadas por mar (datos trimestrales)</p>
+                </div>
+                <div class="format-card">
+                    <strong>mar_go_aa</strong>
+                    <p>Peso bruto de mercancías en todos los puertos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🌍 Paso 4: Configuración de Filtros por País</h2>
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <strong>Filtro GEO:</strong> Seleccionar país deseado
+            </div>
+            <div class="info">
+                <strong>Países disponibles (ejemplos):</strong><br>
+                🇧🇪 Belgium (BE) • 🇪🇸 Spain (ES) • 🇫🇷 France (FR) • 🇩🇪 Germany (DE) • 🇮🇹 Italy (IT)<br>
+                🇳🇱 Netherlands (NL) • 🇵🇹 Portugal (PT) • 🇬🇷 Greece (GR) • 🇵🇱 Poland (PL)
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <strong>Filtro TIME:</strong> Definir período (ej: 2020-2024)
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <strong>Variables adicionales:</strong> Tipo de carga, puertos específicos
+            </div>
+            <div class="info">
+                <strong>💡 Consejo:</strong> Puedes seleccionar múltiples países para comparaciones regionales.
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>📥 Paso 5: Proceso de Descarga</h2>
+            <h3>Formatos disponibles:</h3>
+            <div class="download-formats">
+                <div class="format-card">
+                    <strong>Excel (.xlsx)</strong>
+                    <p>Ideal para análisis</p>
+                </div>
+                <div class="format-card">
+                    <strong>CSV</strong>
+                    <p>Para bases de datos</p>
+                </div>
+                <div class="format-card">
+                    <strong>TSV</strong>
+                    <p>Separado por tabulaciones</p>
+                </div>
+                <div class="format-card">
+                    <strong>PDF</strong>
+                    <p>Para informes</p>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="downloadProgress"></div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>✅ Checklist de Verificación</h2>
+            <div class="checklist">
+                <h3>Antes de descargar:</h3>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>URL correcta cargada</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Sección de transporte marítimo seleccionada</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Dataset apropiado identificado</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Filtros configurados para el país de interés</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Datos visualizados y verificados</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🎥 Demostración en Video</h2>
+            <div class="video-placeholder">
+                <h3>📹 Video Tutorial</h3>
+                <p>Aquí se incluiría un video paso a paso del proceso completo</p>
+                <p><strong>Contenido del video:</strong></p>
+                <ul style="text-align: left; margin: 20px 0;">
+                    <li>Navegación inicial en Eurostat</li>
+                    <li>Selección de dataset de transporte marítimo</li>
+                    <li>Configuración de filtros por país (ejemplo con Bélgica)</li>
+                    <li>Proceso de descarga completo</li>
+                    <li>Verificación de datos descargados</li>
+                    <li>Aplicación del proceso a otros países de la UE</li>
+                </ul>
+                <p><em>Duración estimada: 10-15 minutos</em></p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🔧 Resolución de Problemas</h2>
+            <div class="warning">
+                <strong>Problema:</strong> La página no carga correctamente
+                <br><strong>Solución:</strong> Verificar conexión a internet, limpiar caché del navegador
+            </div>
+            <div class="warning">
+                <strong>Problema:</strong> No aparecen datos para el país seleccionado
+                <br><strong>Solución:</strong> Revisar filtros aplicados, verificar disponibilidad de datos para el período, algunos países pueden tener datos limitados
+            </div>
+            <div class="warning">
+                <strong>Problema:</strong> La descarga no funciona
+                <br><strong>Solución:</strong> Desactivar bloqueadores de pop-ups, intentar formato diferente
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>📞 Recursos de Ayuda</h2>
+            <div class="info">
+                <strong>Eurostat Help Desk:</strong> Soporte técnico oficial
+            </div>
+            <div class="info">
+                <strong>Documentación:</strong> Guías detalladas disponibles en el portal
+            </div>
+            <div class="info">
+                <strong>Actualizaciones:</strong> Los datos se actualizan según frecuencia establecida
+            </div>
+            <div class="step-card">
+                <div class="step-number">✉️</div>
+                <strong>Contacto:</strong> Para dudas específicas sobre esta capacitación
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🎯 Resumen Final</h2>
+            <div class="step-card">
+                <strong>✅ Completado:</strong> Proceso de descarga de datos de transporte marítimo desde Eurostat para cualquier país de la UE
+            </div>
+            <div class="step-card">
+                <strong>📊 Resultado:</strong> Metodología replicable para obtener datos de cualquier país miembro
+            </div>
+            <div class="step-card">
+                <strong>🔄 Próximos pasos:</strong> Análisis de datos, creación de reportes, seguimiento regular
+            </div>
+            <div class="info">
+                <strong>Recordatorio:</strong> Mantener archivos organizados y documentar el proceso para futuras referencias.
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-button" onclick="scrollToTop()">⬆️ Inicio</button>
+        <button class="nav-button" onclick="simulateDownload()">💾 Simular</button>
+    </div>
+
+    <script>
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function simulateDownload() {
+            const progressBar = document.getElementById('downloadProgress');
+            let width = 0;
+            
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    alert('¡Simulación de descarga completada! 🎉\n\nEn el proceso real, el archivo se habría descargado a tu computadora.');
+                } else {
+                    width += 10;
+                    progressBar.style.width = width + '%';
+                }
+            }, 200);
+        }
+
+        // Inicializar animaciones cuando se carga la página
+        window.addEventListener('load', function() {
+            // Animar slides en secuencia
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => {
+                slide.style.animationDelay = (index * 0.1) + 's';
+            });
+        });
+
+        // Efecto de scroll suave para navegación
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('a[href^="#"]');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
