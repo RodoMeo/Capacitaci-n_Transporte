@@ -120,26 +120,15 @@
             font-weight: bold;
         }
 
-.url-box {
-    margin: 10px 0;
-}
-
-.btn-link {
-    display: inline-block;
-    background-color: #005aa7;
-    color: #fff;
-    padding: 10px 16px;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: background 0.3s ease;
-}
-
-.btn-link:hover {
-    background-color: #007ce5;
-}
-
-           
+        .url-box {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            word-break: break-all;
         }
 
         .checklist {
@@ -293,8 +282,6 @@
             .download-formats {
                 grid-template-columns: 1fr;
             }
-
-            
         }
     </style>
 </head>
@@ -332,9 +319,7 @@
                 <strong>URL oficial:</strong> Portal de datos de transporte marítimo
             </div>
             <div class="url-box">
-                <a class="btn-link" href="https://ec.europa.eu/eurostat/databrowser/explore/all/transp?lang=en&subtheme=mar.mar_go&display=list&sort=category" target="_blank">
-                    🔗 Ir al Portal Eurostat
-                </a>
+                https://ec.europa.eu/eurostat/databrowser/explore/all/transp?lang=en&subtheme=mar.mar_go&display=list&sort=category
             </div>
             <div class="warning">
                 <strong>⚠️ Importante:</strong> Asegúrate de tener una conexión estable a internet y un navegador actualizado.
@@ -363,20 +348,16 @@
             <h3>Datasets recomendados para análisis:</h3>
             <div class="download-formats">
                 <div class="format-card">
-                    <strong>mar_go_aa</strong>
-                    <p>Peso bruto de los bienes manejados en todos los puertos por cualquier tipo de comercio</p>
+                    <strong>mar_go_am</strong>
+                    <p>Mercancías transportadas por mar (datos anuales)</p>
                 </div>
                 <div class="format-card">
                     <strong>mar_go_qm</strong>
-                    <p>Peso bruto de las mercancías transportadas de/hacia de los principales puertos por comercio y tipo de tráfico</p>
+                    <p>Mercancías transportadas por mar (datos trimestrales)</p>
                 </div>
                 <div class="format-card">
-                    <strong>mar_go_qmc</strong>
-                    <p>Peso bruto de mercancías manejados por los principales puertos y tipo de cargo - trimestrales </p>
-                </div>
-                <div class="format-card">
-                    <strong>mar_go_am_detl</strong>
-                    <p>Tablas detalladas por cada uno de los países reportantes (principales puertos) por comercio, socio, tipo de cargo, datos anuales </p>
+                    <strong>mar_go_aa</strong>
+                    <p>Peso bruto de mercancías en todos los puertos</p>
                 </div>
             </div>
         </div>
@@ -385,22 +366,145 @@
             <h2>🌍 Paso 4: Configuración de Filtros por País</h2>
             <div class="step-card">
                 <div class="step-number">1</div>
-                <strong>Link a seleccionar:</strong> Detailed tables per each reporting country (main ports) by direction, partner entity, type of cargo and nationality of registration vessels - annual data (mar_go_am_detl)
+                <strong>Filtro GEO:</strong> Seleccionar país deseado
             </div>
             <div class="info">
                 <strong>Países disponibles (ejemplos):</strong><br>
                 🇧🇪 Belgium (BE) • 🇪🇸 Spain (ES) • 🇫🇷 France (FR) • 🇩🇪 Germany (DE) • 🇮🇹 Italy (IT)<br>
-                🇳🇱 Netherlands (NL) • 🇵🇹 Portugal (PT) • 🇬🇷 Greece (GR) • 🇵🇱 Poland (PL), en resumen toda la UE
+                🇳🇱 Netherlands (NL) • 🇵🇹 Portugal (PT) • 🇬🇷 Greece (GR) • 🇵🇱 Poland (PL)
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <strong>Filtro TIME:</strong> Definir período (ej: 2020-2024)
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <strong>Variables adicionales:</strong> Tipo de carga, puertos específicos
             </div>
             <div class="info">
-                <strong>Variables a encontrar:</strong> Tipo de carga, puertos específicos, por países (al dar click en el link del país seleccionado)
-            </div>
-            <div class="info">
-                <strong>💡 Consejo:</strong> Es mejor seleccionar el icono de tabla y no el de descarga si se desea seleccionar varias variables
+                <strong>💡 Consejo:</strong> Puedes seleccionar múltiples países para comparaciones regionales.
             </div>
         </div>
 
-      
+        <div class="slide">
+            <h2>📥 Paso 5: Proceso de Descarga</h2>
+            <h3>Formatos disponibles:</h3>
+            <div class="download-formats">
+                <div class="format-card">
+                    <strong>Excel (.xlsx)</strong>
+                    <p>Ideal para análisis</p>
+                </div>
+                <div class="format-card">
+                    <strong>CSV</strong>
+                    <p>Para bases de datos</p>
+                </div>
+                <div class="format-card">
+                    <strong>TSV</strong>
+                    <p>Separado por tabulaciones</p>
+                </div>
+                <div class="format-card">
+                    <strong>PDF</strong>
+                    <p>Para informes</p>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="downloadProgress"></div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>✅ Checklist de Verificación</h2>
+            <div class="checklist">
+                <h3>Antes de descargar:</h3>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>URL correcta cargada</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Sección de transporte marítimo seleccionada</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Dataset apropiado identificado</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Filtros configurados para el país de interés</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox" onclick="toggleCheck(this)"></div>
+                    <span>Datos visualizados y verificados</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🎥 Demostración en Video</h2>
+            <div class="video-placeholder">
+                <h3>📹 Video Tutorial</h3>
+                <p>Aquí se incluiría un video paso a paso del proceso completo</p>
+                <p><strong>Contenido del video:</strong></p>
+                <ul style="text-align: left; margin: 20px 0;">
+                    <li>Navegación inicial en Eurostat</li>
+                    <li>Selección de dataset de transporte marítimo</li>
+                    <li>Configuración de filtros por país (ejemplo con Bélgica)</li>
+                    <li>Proceso de descarga completo</li>
+                    <li>Verificación de datos descargados</li>
+                    <li>Aplicación del proceso a otros países de la UE</li>
+                </ul>
+                <p><em>Duración estimada: 10-15 minutos</em></p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🔧 Resolución de Problemas</h2>
+            <div class="warning">
+                <strong>Problema:</strong> La página no carga correctamente
+                <br><strong>Solución:</strong> Verificar conexión a internet, limpiar caché del navegador
+            </div>
+            <div class="warning">
+                <strong>Problema:</strong> No aparecen datos para el país seleccionado
+                <br><strong>Solución:</strong> Revisar filtros aplicados, verificar disponibilidad de datos para el período, algunos países pueden tener datos limitados
+            </div>
+            <div class="warning">
+                <strong>Problema:</strong> La descarga no funciona
+                <br><strong>Solución:</strong> Desactivar bloqueadores de pop-ups, intentar formato diferente
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>📞 Recursos de Ayuda</h2>
+            <div class="info">
+                <strong>Eurostat Help Desk:</strong> Soporte técnico oficial
+            </div>
+            <div class="info">
+                <strong>Documentación:</strong> Guías detalladas disponibles en el portal
+            </div>
+            <div class="info">
+                <strong>Actualizaciones:</strong> Los datos se actualizan según frecuencia establecida
+            </div>
+            <div class="step-card">
+                <div class="step-number">✉️</div>
+                <strong>Contacto:</strong> Para dudas específicas sobre esta capacitación
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🎯 Resumen Final</h2>
+            <div class="step-card">
+                <strong>✅ Completado:</strong> Proceso de descarga de datos de transporte marítimo desde Eurostat para cualquier país de la UE
+            </div>
+            <div class="step-card">
+                <strong>📊 Resultado:</strong> Metodología replicable para obtener datos de cualquier país miembro
+            </div>
+            <div class="step-card">
+                <strong>🔄 Próximos pasos:</strong> Análisis de datos, creación de reportes, seguimiento regular
+            </div>
+            <div class="info">
+                <strong>Recordatorio:</strong> Mantener archivos organizados y documentar el proceso para futuras referencias.
+            </div>
+        </div>
     </div>
 
     <div class="navigation">
